@@ -29,6 +29,7 @@ import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurned
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import { useParams } from 'react-router-dom';
 
 interface AmazonQuestionsProps {
   darkMode: boolean;
@@ -483,17 +484,12 @@ const amazonQuestions: Question[] = [
 const LOCAL_STORAGE_KEY = 'amazonQuestionsProgress';
 
 const AmazonQuestions: React.FC<AmazonQuestionsProps> = ({ darkMode }) => {
+  const { company = 'amazon' } = useParams<{ company: string }>();
   const [searchTerm, setSearchTerm] = useState('');
-  const [questions, setQuestions] = useState<Question[]>(() => {
-    const savedProgress = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (savedProgress) {
-      return JSON.parse(savedProgress);
-    }
-    return amazonQuestions.map(q => ({ ...q, status: 'Not Completed', starred: false }));
-  });
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [difficultyFilter, setDifficultyFilter] = useState<string>('all');
+  const [difficultyFilter, setDifficultyFilter] = useState<string>('All');
   const [showStarredOnly, setShowStarredOnly] = useState(false);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [questions, setQuestions] = useState<Question[]>(amazonQuestions);
   const [progress, setProgress] = useState({
     total: { completed: 0, total: 0, percentage: 0 },
     easy: { completed: 0, total: 0, percentage: 0 },
@@ -560,7 +556,7 @@ const AmazonQuestions: React.FC<AmazonQuestionsProps> = ({ darkMode }) => {
   const filteredQuestions = questions
     .filter(question => {
       const matchesSearch = question.title.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesDifficulty = difficultyFilter === 'all' || question.difficulty === difficultyFilter;
+      const matchesDifficulty = difficultyFilter === 'All' || question.difficulty === difficultyFilter;
       const matchesStarred = !showStarredOnly || question.starred;
       return matchesSearch && matchesDifficulty && matchesStarred;
     })
@@ -609,18 +605,9 @@ const AmazonQuestions: React.FC<AmazonQuestionsProps> = ({ darkMode }) => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Typography 
-        variant="h4" 
-        component="h1" 
-        sx={{ 
-          mb: 4, 
-          textAlign: 'center',
-          color: darkMode ? '#ffffff' : '#333333',
-          fontWeight: 'bold'
-        }}
-      >
-        Amazon Interview Questions
+    <Container maxWidth={false} sx={{ mt: 4, mb: 4, px: { xs: 2, sm: 3, md: 4 } }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        {company.charAt(0).toUpperCase() + company.slice(1)} Questions
       </Typography>
 
       <Card sx={{ 
@@ -796,7 +783,7 @@ const AmazonQuestions: React.FC<AmazonQuestionsProps> = ({ darkMode }) => {
               },
             }}
           >
-            <MenuItem value="all">All Difficulties</MenuItem>
+            <MenuItem value="All">All Difficulties</MenuItem>
             <MenuItem value="Easy">Easy</MenuItem>
             <MenuItem value="Medium">Medium</MenuItem>
             <MenuItem value="Hard">Hard</MenuItem>

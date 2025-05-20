@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, Link as RouterLink } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link as RouterLink } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -295,7 +295,7 @@ function App() {
       }}>
         <AppBar position="sticky" sx={{ bgcolor: darkMode ? '#262626' : '#ffffff', boxShadow: 3, zIndex: 1100 }}>
           <Toolbar>
-            <RouterLink to="/" style={{ textDecoration: 'none' }}>
+            <Link component={RouterLink} to="/" style={{ textDecoration: 'none' }}>
               <Typography 
                 variant="h6" 
                 component="div" 
@@ -312,12 +312,16 @@ function App() {
                 }}>
                 Prep<Box component="span" sx={{ color: '#00aaff' }}>Monster</Box>
               </Typography>
-            </RouterLink>
+            </Link>
 
             {/* Desktop Navigation */}
             <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', mr: 3, gap: 3 }}>
-              <Link href="/author" color="inherit" underline="none" sx={{ color: darkMode ? '#bdbdbd' : '#666666', fontWeight: 'medium', '&:hover': { color: darkMode ? '#ffffff' : '#333333' } }}>Author</Link>
-              <Link href="/companies" color="inherit" underline="none" sx={{ color: darkMode ? '#bdbdbd' : '#666666', fontWeight: 'medium', '&:hover': { color: darkMode ? '#ffffff' : '#333333' } }}>Companies</Link>
+              <Link component={RouterLink} to="/author" style={{ textDecoration: 'none' }}>
+                <Typography sx={{ color: darkMode ? '#bdbdbd' : '#666666', fontWeight: 'medium', '&:hover': { color: darkMode ? '#ffffff' : '#333333' } }}>Author</Typography>
+              </Link>
+              <Link component={RouterLink} to="/companies" style={{ textDecoration: 'none' }}>
+                <Typography sx={{ color: darkMode ? '#bdbdbd' : '#666666', fontWeight: 'medium', '&:hover': { color: darkMode ? '#ffffff' : '#333333' } }}>Companies</Typography>
+              </Link>
             </Box>
 
             <Box sx={{ flexGrow: 1 }} />
@@ -381,7 +385,7 @@ function App() {
         <Routes>
           <Route path="/author" element={<Author darkMode={darkMode} />} />
           <Route path="/companies" element={<Companies darkMode={darkMode} />} />
-          <Route path="/companies/amazon" element={<AmazonQuestions darkMode={darkMode} />} />
+          <Route path="/companies/:company" element={<AmazonQuestions darkMode={darkMode} />} />
           <Route path="/" element={
             <Container maxWidth={false} sx={{ mt: 4, mb: 4, px: { xs: 2, sm: 3, md: 4 } }}>
               <Card
