@@ -93,48 +93,46 @@ const Companies: React.FC<CompaniesProps> = ({ darkMode }) => {
         },
         gap: 3
       }}>
-        <AnimatePresence>
-          {filteredCompanies.map((company) => (
-            <motion.div
-              key={company}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.2 }}
-              layout
+        {filteredCompanies.map((company) => (
+          <motion.div
+            key={company}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.2 }}
+            layout
+          >
+            <Card 
+              onClick={() => handleCompanyClick(company)}
+              sx={{ 
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                bgcolor: darkMode ? '#262626' : '#ffffff',
+                transition: 'transform 0.2s',
+                cursor: 'pointer',
+                '&:hover': {
+                  transform: 'scale(1.02)',
+                  boxShadow: 6
+                }
+              }}
             >
-              <Card 
-                onClick={() => handleCompanyClick(company)}
-                sx={{ 
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  bgcolor: darkMode ? '#262626' : '#ffffff',
-                  transition: 'transform 0.2s',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    transform: 'scale(1.02)',
-                    boxShadow: 6
-                  }
-                }}
-              >
-                <CardContent>
-                  <Typography 
-                    variant="h5" 
-                    component="div"
-                    sx={{ 
-                      color: darkMode ? '#ffffff' : '#333333',
-                      fontWeight: 'bold',
-                      textAlign: 'center'
-                    }}
-                  >
-                    {company}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+              <CardContent>
+                <Typography 
+                  variant="h5" 
+                  component="div"
+                  sx={{ 
+                    color: darkMode ? '#ffffff' : '#333333',
+                    fontWeight: 'bold',
+                    textAlign: 'center'
+                  }}
+                >
+                  {company}
+                </Typography>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
       </Box>
 
       {filteredCompanies.length === 0 && (
