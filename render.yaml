@@ -2,12 +2,10 @@ services:
   - type: web
     name: dsa-patterns
     env: node
-    buildCommand: yarn install && GENERATE_SOURCEMAP=false yarn build
-    startCommand: serve -s build
+    buildCommand: yarn install && yarn build
+    startCommand: yarn start
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 10000
     healthCheckPath: /
     autoDeploy: true 
