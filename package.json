@@ -23,8 +23,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "serve -s build -l $PORT",
-    "build": "GENERATE_SOURCEMAP=false react-scripts build",
+    "start": "serve -s build",
+    "build": "CI=false react-scripts build",
     "dev": "react-scripts start",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -52,6 +52,6 @@
     "ajv-keywords": "^5.1.0"
   },
   "engines": {
-    "node": "18.x"
+    "node": ">=18.0.0"
   }
 }
