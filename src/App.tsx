@@ -25,7 +25,12 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  Card
+  Card,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  Divider
 } from '@mui/material';
 import type { GridProps } from '@mui/material/Grid';
 import GitHubIcon from '@mui/icons-material/GitHub';
@@ -52,11 +57,9 @@ const DARK_MODE_STORAGE_KEY = 'darkModePreference';
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
     const savedMode = localStorage.getItem(DARK_MODE_STORAGE_KEY);
-    if (savedMode !== null) {
-      return JSON.parse(savedMode);
-    }
-    return true;
+    return savedMode ? JSON.parse(savedMode) : false;
   });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [patterns, setPatterns] = useState<Pattern[]>(() => {
     const savedPatterns = localStorage.getItem(LOCAL_STORAGE_KEY);
     return savedPatterns ? JSON.parse(savedPatterns) : initialPatterns;
@@ -274,6 +277,14 @@ function App() {
     pattern.name.toLowerCase().includes(patternSearchTerm.toLowerCase())
   );
 
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const handleMobileMenuClose = () => {
+    setMobileMenuOpen(false);
+  };
+
   return (
     <Router>
       <Box sx={{ 
@@ -303,6 +314,7 @@ function App() {
               </Typography>
             </RouterLink>
 
+            {/* Desktop Navigation */}
             <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', mr: 3, gap: 3 }}>
               <Link href="/author" color="inherit" underline="none" sx={{ color: darkMode ? '#bdbdbd' : '#666666', fontWeight: 'medium', '&:hover': { color: darkMode ? '#ffffff' : '#333333' } }}>Author</Link>
               <Link href="/companies" color="inherit" underline="none" sx={{ color: darkMode ? '#bdbdbd' : '#666666', fontWeight: 'medium', '&:hover': { color: darkMode ? '#ffffff' : '#333333' } }}>Companies</Link>
@@ -327,10 +339,44 @@ function App() {
 
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               <IconButton color="inherit" href="#" target="_blank" sx={{ color: darkMode ? '#bdbdbd' : '#666666', '&:hover': { color: darkMode ? '#ffffff' : '#333333' } }}><GitHubIcon fontSize="small"/></IconButton>
-              <IconButton color="inherit" sx={{ display: { xs: 'block', md: 'none' }, color: darkMode ? '#bdbdbd' : '#666666', '&:hover': { color: darkMode ? '#ffffff' : '#333333' } }}><MenuIcon fontSize="small"/></IconButton>
+              <IconButton 
+                color="inherit" 
+                onClick={toggleMobileMenu}
+                sx={{ 
+                  display: { xs: 'block', md: 'none' }, 
+                  color: darkMode ? '#bdbdbd' : '#666666', 
+                  '&:hover': { color: darkMode ? '#ffffff' : '#333333' } 
+                }}
+              >
+                <MenuIcon fontSize="small"/>
+              </IconButton>
             </Box>
           </Toolbar>
         </AppBar>
+
+        {/* Mobile Menu Drawer */}
+        <Drawer
+          anchor="right"
+          open={mobileMenuOpen}
+          onClose={handleMobileMenuClose}
+          PaperProps={{
+            sx: {
+              bgcolor: darkMode ? '#262626' : '#ffffff',
+              color: darkMode ? '#ffffff' : '#333333',
+              width: 240
+            }
+          }}
+        >
+          <List>
+            <ListItem button component={RouterLink} to="/author" onClick={handleMobileMenuClose}>
+              <ListItemText primary="Author" />
+            </ListItem>
+            <Divider sx={{ bgcolor: darkMode ? '#424242' : '#e0e0e0' }} />
+            <ListItem button component={RouterLink} to="/companies" onClick={handleMobileMenuClose}>
+              <ListItemText primary="Companies" />
+            </ListItem>
+          </List>
+        </Drawer>
 
         <Routes>
           <Route path="/author" element={<Author darkMode={darkMode} />} />
@@ -341,21 +387,29 @@ function App() {
               <Card
                 elevation={3}
                 sx={{
-                  p: 3,
+                  p: { xs: 2, sm: 3 },
                   bgcolor: darkMode ? '#212121' : '#ffffff',
                   borderRadius: 2,
                   boxShadow: 3,
                   mb: 4,
-                  width: '97%',
+                  width: { xs: '91%', sm: '96%' },
                   display: 'flex',
                   flexDirection: { xs: 'column', md: 'row' },
                   alignItems: 'flex-start',
-                  gap: { xs: 1, md: 1 }
+                  gap: { xs: 3, md: 4 }
                 }}
               >
-                <Box sx={{ flexGrow: 1, width: { xs: '100%', md: 'auto' }, pr: { md: 12 } }}>
+                <Box sx={{ 
+                  flexGrow: 1, 
+                  width: '100%', 
+                  pr: { md: 4 }
+                }}>
                   <Typography variant="h6" component="div" sx={{ mb: 2, fontWeight: 'bold', color: darkMode ? '#ffffff' : '#333333' }}>Filters</Typography>
-                  <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr 1fr' }, gap: 2 }}>
+                  <Box sx={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' }, 
+                    gap: { xs: 3, sm: 2 }
+                  }}>
                     <Box>
                       <Typography variant="caption" sx={{ display: 'block', mb: 0.5, fontWeight: 'medium', color: darkMode ? '#ffffff' : '#333333' }}>Search</Typography>
                       <TextField
@@ -365,7 +419,14 @@ function App() {
                         onChange={handleSearchChange}
                         fullWidth
                         InputProps={{ startAdornment: (<SearchIcon sx={{ color: darkMode ? '#ffffff' : '#333333', mr: 1 }} />) }}
-                        sx={{ bgcolor: darkMode ? '#121212' : '#ffffff', '.MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#424242' : '#e0e0e0' }, input: { color: darkMode ? '#ffffff' : '#333333' }, label: { color: darkMode ? '#ffffff' : '#333333' }, '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#616161' : '#e0e0e0' }, '.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#00aaff' : '#333333' } }}
+                        sx={{ 
+                          bgcolor: darkMode ? '#121212' : '#ffffff', 
+                          '.MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#424242' : '#e0e0e0' }, 
+                          input: { color: darkMode ? '#ffffff' : '#333333' }, 
+                          label: { color: darkMode ? '#ffffff' : '#333333' }, 
+                          '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#616161' : '#e0e0e0' }, 
+                          '.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#00aaff' : '#333333' } 
+                        }}
                         InputLabelProps={{ style: { color: darkMode ? '#ffffff' : '#333333' } }}
                       />
                     </Box>
@@ -376,7 +437,14 @@ function App() {
                           value={patternFilter}
                           onChange={handlePatternChange}
                           displayEmpty
-                          sx={{ bgcolor: darkMode ? '#121212' : '#ffffff', '.MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#424242' : '#e0e0e0' }, '.MuiSelect-select': { color: darkMode ? '#ffffff' : '#333333' }, '.MuiSvgIcon-root': { color: darkMode ? '#ffffff' : '#333333' }, '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#616161' : '#e0e0e0' }, '.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#00aaff' : '#333333' } }}
+                          sx={{ 
+                            bgcolor: darkMode ? '#121212' : '#ffffff', 
+                            '.MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#424242' : '#e0e0e0' }, 
+                            '.MuiSelect-select': { color: darkMode ? '#ffffff' : '#333333' }, 
+                            '.MuiSvgIcon-root': { color: darkMode ? '#ffffff' : '#333333' }, 
+                            '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#616161' : '#e0e0e0' }, 
+                            '.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#00aaff' : '#333333' } 
+                          }}
                           MenuProps={{
                             PaperProps: {
                               sx: {
@@ -396,67 +464,10 @@ function App() {
                             },
                           }}
                         >
-                          <Box sx={{ position: 'sticky', top: 0, bgcolor: darkMode ? '#121212' : '#ffffff', borderBottom: `1px solid ${darkMode ? '#424242' : '#e0e0e0'}`, p: 1, zIndex: 1 }}>
-                            <TextField
-                              size="small"
-                              placeholder="Search patterns..."
-                              value={patternSearchTerm}
-                              onChange={handlePatternSearchChange}
-                              fullWidth
-                              onClick={(e) => e.stopPropagation()}
-                              onKeyDown={(e) => e.stopPropagation()}
-                              sx={{ 
-                                bgcolor: darkMode ? '#121212' : '#ffffff', 
-                                '.MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#424242' : '#e0e0e0' }, 
-                                input: { color: darkMode ? '#ffffff' : '#333333' }, 
-                                '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#616161' : '#e0e0e0' }, 
-                                '.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#00aaff' : '#333333' } 
-                              }}
-                            />
-                          </Box>
-                          <MenuItem value="all">All Patterns</MenuItem>
-                          <Box sx={{ borderTop: `1px solid ${darkMode ? '#424242' : '#e0e0e0'}`, borderBottom: `1px solid ${darkMode ? '#424242' : '#e0e0e0'}`, my: 1 }} />
-                          {filteredPatternOptions.map(pattern => (
+                          <MenuItem value="all">All</MenuItem>
+                          {filteredPatternOptions.map((pattern) => (
                             <MenuItem key={pattern.name} value={pattern.name}>{pattern.name}</MenuItem>
                           ))}
-                        </Select>
-                      </FormControl>
-                    </Box>
-                    <Box>
-                      <Typography variant="caption" sx={{ display: 'block', mb: 0.5, fontWeight: 'medium', color: darkMode ? '#ffffff' : '#333333' }}>Status</Typography>
-                      <FormControl size="small" fullWidth>
-                        <Select 
-                          value={statusFilter} 
-                          onChange={handleStatusChange} 
-                          displayEmpty 
-                          sx={{ 
-                            bgcolor: darkMode ? '#121212' : '#ffffff', 
-                            '.MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#424242' : '#e0e0e0' }, 
-                            '.MuiSelect-select': { color: darkMode ? '#ffffff' : '#333333' }, 
-                            '.MuiSvgIcon-root': { color: darkMode ? '#ffffff' : '#333333' }, 
-                            '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#616161' : '#e0e0e0' }, 
-                            '.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: darkMode ? '#00aaff' : '#333333' } 
-                          }}
-                          MenuProps={{
-                            PaperProps: {
-                              sx: {
-                                bgcolor: darkMode ? '#121212' : '#ffffff',
-                                color: darkMode ? '#ffffff' : '#333333',
-                                '& .MuiMenuItem-root': {
-                                  color: darkMode ? '#ffffff' : '#333333',
-                                  '&:hover': {
-                                    bgcolor: darkMode ? '#424242' : '#f5f5f5',
-                                  },
-                                  '&.Mui-selected': {
-                                    bgcolor: darkMode ? '#424242' : '#e0e0e0',
-                                  },
-                                },
-                              },
-                            },
-                          }}
-                        >
-                          <MenuItem value="all">All</MenuItem>
-                          <MenuItem value="Completed">Completed</MenuItem>
                         </Select>
                       </FormControl>
                     </Box>
@@ -530,10 +541,11 @@ function App() {
                   flexDirection: 'column', 
                   alignItems: 'center', 
                   gap: 2, 
-                  width: { xs: '100%', md: '30%' }, 
+                  width: { xs: '100%', md: 'auto' }, 
                   borderLeft: { xs: 'none', md: `1px solid ${darkMode ? '#424242' : '#e0e0e0'}` }, 
-                  pl: { xs: 0, md: 4 },
-                  mt: { xs: 4, md: 0 }
+                  pl: { xs: 0, md: 7 },
+                  pr: { xs: 0, md: 3 },
+                  mt: { xs: 2, md: 0 }
                 }}>
                   <Typography 
                     variant="h6" 
@@ -550,10 +562,10 @@ function App() {
 
                   <Box sx={{ 
                     display: 'flex', 
-                    flexDirection: { xs: 'column', md: 'row' }, 
+                    flexDirection: { xs: 'column', sm: 'row' }, 
                     justifyContent: 'center', 
                     alignItems: 'center', 
-                    gap: 4, 
+                    gap: { xs: 3, sm: 4 }, 
                     width: '100%' 
                   }}>
                     <Box sx={{ position: 'relative', display: 'inline-flex', flexShrink: 0 }}>
@@ -561,7 +573,7 @@ function App() {
                         variant="determinate"
                         value={overallProgress}
                         size={100}
-                        thickness={6}
+                        thickness={4}
                         sx={{
                           color: '#4caf50',
                           transition: 'stroke-dashoffset 0.3s ease 0s',
@@ -599,7 +611,7 @@ function App() {
                       </Box>
                     </Box>
 
-                    <Box display="flex" flexDirection="column" gap={1} sx={{ flexGrow: 1, maxWidth: 200 }}>
+                    <Box display="flex" flexDirection="column" gap={1} sx={{ flexGrow: 1, width: { xs: '100%', sm: 'auto' }, maxWidth: { sm: 200 } }}>
                       <Box sx={{ bgcolor: darkMode ? '#333333' : '#eeeeee', p: 1, borderRadius: 1, borderLeft: `4px solid #66bb6a`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#66bb6a' }}>Easy</Typography>
                         <Typography variant="body2" sx={{ color: darkMode ? '#ffffff' : '#333333' }}>{difficultyProgress.easy.completed}/{difficultyProgress.easy.total}</Typography>
@@ -614,6 +626,10 @@ function App() {
                       </Box>
                     </Box>
                   </Box>
+
+
+
+                  
                 </Box>
               </Card>
 
