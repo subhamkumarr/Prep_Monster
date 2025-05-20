@@ -286,7 +286,7 @@ function App() {
   };
 
   return (
-    <Router basename="/Prep_Monster">
+    <Router>
       <Box sx={{ 
         flexGrow: 1, 
         bgcolor: darkMode ? '#1a1a1a' : '#f5f5f5', 
@@ -372,11 +372,11 @@ function App() {
           }}
         >
           <List>
-            <ListItem button component={RouterLink} to="/author" onClick={handleMobileMenuClose}>
+            <ListItem component={RouterLink} to="/author" onClick={handleMobileMenuClose}>
               <ListItemText primary="Author" />
             </ListItem>
             <Divider sx={{ bgcolor: darkMode ? '#424242' : '#e0e0e0' }} />
-            <ListItem button component={RouterLink} to="/companies" onClick={handleMobileMenuClose}>
+            <ListItem component={RouterLink} to="/companies" onClick={handleMobileMenuClose}>
               <ListItemText primary="Companies" />
             </ListItem>
           </List>
@@ -630,10 +630,6 @@ function App() {
                       </Box>
                     </Box>
                   </Box>
-
-
-
-                  
                 </Box>
               </Card>
 
