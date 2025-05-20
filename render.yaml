@@ -3,9 +3,11 @@ services:
     name: dsa-patterns
     env: node
     buildCommand: npm install && npm run build
-    startCommand: npm start
+    startCommand: serve -s build
     envVars:
       - key: NODE_VERSION
         value: 18.0.0
+      - key: NODE_ENV
+        value: production
     healthCheckPath: /
     autoDeploy: true 
