@@ -286,7 +286,7 @@ function App() {
   };
 
   return (
-    <Router>
+    <Router basename="/Prep_Monster">
       <Box sx={{ 
         flexGrow: 1, 
         bgcolor: darkMode ? '#1a1a1a' : '#f5f5f5', 

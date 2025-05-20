@@ -2,12 +2,14 @@ services:
   - type: web
     name: dsa-patterns
     env: node
-    buildCommand: npm install && npm run build
+    buildCommand: yarn install && yarn build
     startCommand: serve -s build
     envVars:
       - key: NODE_VERSION
         value: 18.0.0
       - key: NODE_ENV
         value: production
-    healthCheckPath: /
+      - key: PUBLIC_URL
+        value: /Prep_Monster
+    healthCheckPath: /Prep_Monster
     autoDeploy: true 
